@@ -18,8 +18,8 @@ describe("generate", function(){
  
   })
 
-  // function generic
-  function create<T>(value:T): T {
+  // function generic , with default parameter type
+  function create<T = string>(value:T): T {
     return value
   } 
 
@@ -51,7 +51,7 @@ describe("generate", function(){
     expect(entry.key).toBe(1)
     expect(entry.value).toBe("hello")
     
-    const triple = new Triple<number, string, string>(1, "hello", "yusuf")
+    const triple = new Triple(1, "hello", "yusuf")
     expect(triple.first).toBe(1)
     expect(triple.second).toBe("hello")
     expect(triple.third).toBe("yusuf") 
@@ -80,6 +80,57 @@ describe("generate", function(){
     const simple = new SimpleGeneric<string>()
     simple.setValue("yusuf")
     expect(simple.getValue()).toBe("yusuf")
+  })
+
+
+  interface Employee {
+    id: string
+    name: string
+  }
+
+  interface Manager extends Employee {
+    totalEmployee: number
+  }
+
+  interface VP extends Manager {
+    totalManager: number
+  }
+
+  class EmployeeData<T extends Employee> {
+    constructor(public employee: T){
+    }
+  }
+
+  // only interface Employee and inheritance Employee can support generic type
+  it("should support constraint", async () => {
+    const data1 = new EmployeeData<Manager>({
+      id: "1",
+      name: "sidik",
+      totalEmployee: 12
+    })
+  })
+
+
+  interface Murid {
+    id: number
+    nama: string
+    kelas: string
+  }
+  
+  it("should support array type", () => {
+    const array = new Array<string>()
+    array.push("sidik")
+    array.push("amar")
+    expect(array[0]).toBe("sidik")
+    expect(array[1]).toBe("amar")
+  
+    const arrayOfObject = new Array<Murid>()
+    arrayOfObject.push({
+      id:1,
+      nama: "ammar",
+      kelas: "1A"
+    })
+    expect(arrayOfObject[0]).toStrictEqual({id:1, nama: "ammar", kelas: "1A"})
   })
 
 })
